@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Fb Base Core</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="/css/bulma.css?v=0.2.3" />
+  <link rel="stylesheet" href="/css/index.css" />
+  <!--[if lt IE 9]>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
+  <![endif]-->
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-left">
+    <a class="nav-item is-brand" href="/">
+      <h1 class="title">fbBase Core</h1>
+    </a>
+  </div>
+  <div class="nav-center">
+    <a id="signOut" class="nav-item" href="javascript:void(0);" style="display:none;">Logout</a>
+  </div>
+</nav>
+
+<section id="login-section" class="hero is-fullheight">
+  <div class="hero-body">
+    <div class="container">
+      <div id="loading-block" class="has-text-centered" style="display:block;">
+        <h1 class="title">Now Loading...</h1>
+      </div>
+      <div id="login-block" class="" style="display:none;">
+        <div class="column is-8 is-offset-2">
+          <h1 class="title">Login</h1>
+          <form onsubmit="return false;">
+            <div class="box">
+              <label class="label">Email</label>
+              <p class="control has-icon">
+                <input id="email" class="input" type="email" placeholder="jsmith@example.org">
+                <i class="fa fa-envelope"></i>
+              </p>
+              <label class="label">Password</label>
+              <p class="control has-icon">
+                <input id="password" class="input" type="password" placeholder="●●●●●●●">
+                <i class="fa fa-key"></i>
+              </p>
+              <p class="control">
+                <div id="login-message" class="notification is-danger" style="display:none;">
+                  <button class="delete" onclick="this.parentNode.style.display = 'none';"></button>
+                  <span id="login-message-text"></span>
+                </div>
+              </p>
+              <hr>
+              <p class="control">
+                <button id="signIn" type="submit" class="button is-primary">Login</button>
+              </p>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="main-section" class="section" style="display:none;">
+  <div class="container">
+    main
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <p>
+        <strong>fbBase Core</strong> by
+        <a class="icon" href="https://github.com/yshgt">
+          <i class="fa fa-github"></i>
+        </a>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="https://www.gstatic.com/firebasejs/3.6.4/firebase.js"></script>
+<script src="/js/initfb.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/main.js"></script>
+</body>
+</html>

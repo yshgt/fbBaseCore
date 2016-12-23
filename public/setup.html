@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Setup</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="/css/bulma.css?v=0.2.3" />
+  <!--[if lt IE 9]>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
+  <![endif]-->
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-left">
+    <a class="nav-item is-brand" href="/">
+      <h1 class="title">Setup</h1>
+      <h2 class="subtitle">
+        delete this file after setup
+      </h2>
+    </a>
+  </div>
+</nav>
+
+<section class="section">
+  <div class="container">
+    <div class="heading">
+      <h1 class="title">Create Users</h1>
+      <h2 class="subtitle">
+        email, password in each line
+      </h2>
+    </div>
+    <div class="columns">
+      <div class="column">
+        <div class="block">
+          <p class="control">
+            <textarea id="dummy-user-data" class="textarea" placeholder="Textarea"></textarea>
+          </p>
+        </div>
+      </div>
+      <div class="column">
+        <div class="block">
+          <button class="button is-warning" onclick="createUsers()">Create Test Users</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script src="https://www.gstatic.com/firebasejs/3.6.4/firebase.js"></script>
+<script src="/js/initfb.js"></script>
+<script>
+var dummyUserDataInput = document.getElementById('dummy-user-data');
+
+var createUsers = function(){
+  data = dummyUserDataInput.value.split("\n");
+  console.log(data.length);
+  data.forEach(function(line){
+    var words = line.split(",");
+    if(words.length != 2){
+      console.log("invalid line", line);
+      return;
+    }
+    var email = words[0].trim();
+    var password = words[1].trim();
+    createUser(email, password);
+  });
+};
+
+var createUser = function(email, password){
+  firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
+    var errorCode = error.code;
+    var errorMessage = error.message;
+    if (errorCode == 'auth/weak-password') {
+      alert('The password is too weak.');
+    } else {
+      alert(errorMessage);
+    }
+    console.log(error);
+  });
+}
+
+dummyUserDataInput.value = [
+  "kirsten@test.com, banana",
+  "jin@test.com, banana",
+  "angelica@test.com, banana",
+  "raphael@test.com, banana",
+  "allistair@test.com, banana",
+  "aurora@test.com, banana",
+  "gannon@test.com, banana",
+  "xantha@test.com, banana",
+  "joseph@test.com, banana",
+  "wing@test.com, banana",
+  "kermit@test.com, banana",
+  "lana@test.com, banana",
+  "demetrius@test.com, banana",
+  "barry@test.com, banana",
+  "brielle@test.com, banana",
+  "karina@test.com, banana",
+  "abigail@test.com, banana",
+  "lane@test.com, banana",
+  "melodie@test.com, banana",
+  "brandon@test.com, banana",
+  "malcolm@test.com, banana",
+  "sylvia@test.com, banana",
+  "joy@test.com, banana",
+  "angela@test.com, banana",
+  "madeline@test.com, banana",
+  "fitzgerald@test.com, banana",
+  "rhiannon@test.com, banana",
+  "beck@test.com, banana",
+  "craig@test.com, banana",
+  "vance@test.com, banana",
+  "roth@test.com, banana",
+  "chandler@test.com, banana",
+  "zane@test.com, banana",
+  "scott@test.com, banana",
+  "harrison@test.com, banana",
+  "shafira@test.com, banana",
+  "amity@test.com, banana",
+  "wang@test.com, banana",
+  "steven@test.com, banana",
+  "brittany@test.com, banana",
+  "anastasia@test.com, banana",
+  "keefe@test.com, banana",
+  "ina@test.com, banana",
+  "alan@test.com, banana",
+  "mufutau@test.com, banana",
+  "geoffrey@test.com, banana",
+  "hyatt@test.com, banana",
+  "hayden@test.com, banana",
+  "norman@test.com, banana",
+  "colleen@test.com, banana",
+  "blaze@test.com, banana",
+  "zorita@test.com, banana",
+  "herrod@test.com, banana",
+  "quamar@test.com, banana",
+  "harding@test.com, banana",
+  "tyler@test.com, banana",
+  "rae@test.com, banana",
+  "amela@test.com, banana",
+  "berk@test.com, banana",
+  "rahim@test.com, banana",
+  "gisela@test.com, banana",
+  "penelope@test.com, banana",
+  "oliver@test.com, banana",
+  "alexandra@test.com, banana",
+  "kiara@test.com, banana",
+  "cyrus@test.com, banana",
+  "ali@test.com, banana",
+  "bryar@test.com, banana",
+  "aaron@test.com, banana",
+  "reuben@test.com, banana",
+  "julian@test.com, banana",
+  "tatyana@test.com, banana",
+  "drew@test.com, banana",
+  "griffin@test.com, banana",
+  "jordan@test.com, banana",
+  "signe@test.com, banana",
+  "rina@test.com, banana",
+  "kitra@test.com, banana",
+  "olivia@test.com, banana",
+  "shaine@test.com, banana",
+  "hamish@test.com, banana",
+  "slade@test.com, banana",
+  "selma@test.com, banana",
+  "mercedes@test.com, banana",
+  "mckenzie@test.com, banana",
+  "victor@test.com, banana",
+  "russell@test.com, banana",
+  "edan@test.com, banana",
+  "amanda@test.com, banana",
+  "kyra@test.com, banana",
+  "mallory@test.com, banana",
+  "samantha@test.com, banana",
+  "curran@test.com, banana",
+  "maggy@test.com, banana",
+  "suki@test.com, banana",
+  "bernard@test.com, banana",
+  "asher@test.com, banana"
+].join("\n");
+</script>
+</body>
+</html>
