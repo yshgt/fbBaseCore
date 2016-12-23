@@ -61,7 +61,6 @@ git remote add origin https://github.com/USERNAME/PROJECTNAME.git  # gitのサ�
 git push -u origin master # gitのサーバーに保存（初回はログイン情報を入力する）
 ```
 
-### 開発を開始する
 #### ファイル構成
 - PROJECTNAME
   - .gitignore  :git管理対象外にするものを定義しているファイル（変更不要）
@@ -128,3 +127,24 @@ firebase serve
   - Create Test Usersボタンをクリック
 
 - http://localhost:5000 にアクセスしてテストユーザーでログインする
+
+
+### 開発する
+主に、index.html、main.jsを編集することになります。
+
+#### gitに保存する
+ある程度の作業完了毎に履歴の保存をしておきましょう
+- gitに保存する
+```sh
+git add .
+git commit -m "コメント"
+git push origin master #これでサーバーに送信される
+```
+
+### 公開する
+localでのテストで動きを確認したら、サーバーにアップしましょう
+- firebaseサーバーで公開する
+  - 以下のコマンドを実行するとサーバーで公開されます
+```sh
+firebase deploy
+```
