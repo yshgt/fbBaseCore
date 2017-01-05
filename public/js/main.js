@@ -54,66 +54,71 @@ Main.prototype.fbAuthCallback = function(){
   loadingBlock.style.display = 'none';
 };
 
-// settings for auth
-Main.prototype.fbAuthOpts = {
-  // called just before sending signIn request (after button clicked)
-  beforeSignIn: function(){
-    console.log('overload beforeSignIn 2');
-    // validation
-    if(this.emailInput.value.length < 4){
-      alert('invalid email address');
-      return false;
+Main.prototype.openSection = function(sectionIds, isSingle){
+  if(typeof isSingle === 'undefined') isSingle = true;
+  var sections = document.getElementsByTagName('section');
+  for(var i = 0; i < sections.length; i++){
+    var section = sections[i];
+    if(sectionIds.indexOf(section.id) > -1){
+      section.style.display = 'block';
+    } else if(isSingle) {
+      section.style.display = 'none';
     }
-    if(this.passwordInput.value.length < 2){
-      alert('invalid password address');
-      return false;
-    }
-    // change the button state into loading
-    this.signInButton.classList.add('is-loading');
-    return true;
-  },
-  beforeSignOut: function(){
-    return true;
-  },
-  // called after signin successfully
-  afterSignInSuccess: function(value){
-    console.log('overload afterSignInSuccess 2', value);
-    // remove loading state from the button
-    this.signInButton.classList.remove('is-loading');
-  },
-  // called after signin fail
-  afterSignInFailure: function(error){
-    console.log('after signIn Failure 2', error);
-    // remove loading state from the button
-    this.signInButton.classList.remove('is-loading');
-    // show error message
-    main.loginMessageText.innerHTML = error.message;
-    main.loginMessage.style.display = 'block';
-  },
-  // called after auth state changed into login
-  afterAuthStateChangedOn: function(user){
-    // hide login section and show main section
-    var loginSection = document.getElementById('login-section');
-    var loginBlock = document.getElementById('login-block');
-    var mainSection = document.getElementById('main-section');
-    loginSection.style.display = 'none';
-    loginBlock.style.display = 'none';
-    mainSection.style.display = 'block';
-    console.log('after auth state changed on', user);
-    window.currentUser = user;
-  },
-  // called after auth state changed into logout
-  afterAuthStateChangedOff: function(){
-    // show login section and hide main section
-    window.currentUser = null;
-    var loginSection = document.getElementById('login-section');
-    var loginBlock = document.getElementById('login-block');
-    var mainSection = document.getElementById('main-section');
-    loginSection.style.display = 'block';
-    loginBlock.style.display = 'block';
-    mainSection.style.display = 'none';
-    console.log('after auth state changed off');
   }
+};
+
+// settings for auth
+Main.prototype.fbAuthOpts = function(scope){
+  return {
+    // called just before sending signIn request (after button clicked)
+    beforeSignIn: function(){
+      console.log('overload beforeSignIn 2');
+      // validation
+      if(this.emailInput.value.length < 4){
+        alert('invalid email address');
+        return false;
+      }
+      if(this.passwordInput.value.length < 2){
+        alert('invalid password address');
+        return false;
+      }
+      // change the button state into loading
+      this.signInButton.classList.add('is-loading');
+      return true;
+    },
+    beforeSignOut: function(){
+      return true;
+    },
+    // called after signin successfully
+    afterSignInSuccess: function(value){
+      console.log('overload afterSignInSuccess 2', value);
+      // remove loading state from the button
+      this.signInButton.classList.remove('is-loading');
+    },
+    // called after signin fail
+    afterSignInFailure: function(error){
+      console.log('after signIn Failure 2', error);
+      // remove loading state from the button
+      this.signInButton.classList.remove('is-loading');
+      // show error message
+      scope.loginMessageText.innerHTML = error.message;
+      scope.loginMessage.style.display = 'block';
+    },
+    // called after auth state changed into login
+    afterAuthStateChangedOn: function(user){
+      // hide login section and show main section
+      scope.openSection(['main-section'], true);
+      console.log('after auth state changed on', user);
+      window.currentUser = user;
+    },
+    // called after auth state changed into logout
+    afterAuthStateChangedOff: function(){
+      // show login section and hide main section
+      window.currentUser = null;
+      scope.openSection(['login-section'], true);
+      console.log('after auth state changed off');
+    }
+  };
 };
 
 Main.prototype.checkSetup = function() {
@@ -132,5 +137,5 @@ Main.prototype.checkSetup = function() {
 
 window.onload = function() {
   window.main = new Main();
-  window.fbAuth = new FbAuth(main.fbAuthCallback, main.fbAuthOpts);
+  window.fbAuth = new FbAuth(main.fbAuthCallback, main.fbAuthOpts(main));
 };

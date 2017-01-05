@@ -26,40 +26,52 @@
   </div>
 </nav>
 
-<section id="login-section" class="hero is-fullheight">
+<section id="loading-section" class="hero is-fullheight">
   <div class="hero-body">
     <div class="container">
       <div id="loading-block" class="has-text-centered" style="display:block;">
-        <h1 class="title">Now Loading...</h1>
+        <h1 class="title">
+          <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+          <span class="sr-only">Loading...</span>
+        </h1>
       </div>
-      <div id="login-block" class="" style="display:none;">
-        <div class="column is-8 is-offset-2">
-          <h1 class="title">Login</h1>
-          <form onsubmit="return false;">
-            <div class="box">
-              <label class="label">Email</label>
-              <p class="control has-icon">
-                <input id="email" class="input" type="email" placeholder="jsmith@example.org">
+    </div>
+  </div>
+</section>
+
+<section id="login-section" class="hero is-fullheight" style="display:none;">
+  <div class="hero-body">
+    <div class="container">
+      <div class="column is-8 is-offset-2">
+        <h1 class="title">Login</h1>
+        <form onsubmit="return false;">
+          <div class="box">
+            <label class="label">Email</label>
+            <p class="control has-icon">
+              <input id="email" class="input" type="email" placeholder="jsmith@example.org">
+              <span class="icon">
                 <i class="fa fa-envelope"></i>
-              </p>
-              <label class="label">Password</label>
-              <p class="control has-icon">
-                <input id="password" class="input" type="password" placeholder="●●●●●●●">
+              </span>
+            </p>
+            <label class="label">Password</label>
+            <p class="control has-icon">
+              <input id="password" class="input" type="password" placeholder="●●●●●●●">
+              <span class="icon">
                 <i class="fa fa-key"></i>
-              </p>
-              <p class="control">
-                <div id="login-message" class="notification is-danger" style="display:none;">
-                  <button class="delete" onclick="this.parentNode.style.display = 'none';"></button>
-                  <span id="login-message-text"></span>
-                </div>
-              </p>
-              <hr>
-              <p class="control">
-                <button id="signIn" type="submit" class="button is-primary">Login</button>
-              </p>
-            </div>
-          </form>
-        </div>
+              </span>
+            </p>
+            <p class="control">
+              <div id="login-message" class="notification is-danger" style="display:none;">
+                <button class="delete" onclick="this.parentNode.style.display = 'none';"></button>
+                <span id="login-message-text"></span>
+              </div>
+            </p>
+            <hr>
+            <p class="control">
+              <button id="signIn" type="submit" class="button is-primary">Login</button>
+            </p>
+          </div>
+        </form>
       </div>
     </div>
   </div>
