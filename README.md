@@ -33,9 +33,17 @@ npm config set https-proxy http://proxy.aaaa.com:8080
 npm config set proxy http://proxy.aaaa.com:8080
 ```
 - Firebaseライブラリのインストール
+  - PowerShellから、以下のコマンドを実行
 ```sh
 npm install -g firebase-tools
 ```
+
+- Firebaseへログイン
+  - PowerShellから、以下のコマンドを実行。ブラウザが開いて、Googleログインを実行する
+```sh
+firebase login
+```
+
 
 ### 開発用テンプレートを使って初期設定をする
 認証やテストユーザー登録など基本機能が実装された開発用テンプレートを使う
