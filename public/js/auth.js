@@ -44,7 +44,8 @@ FbAuth.prototype.setOptions = function(opts){
   k = 'afterAuthStateChangedOff'; if(chk(k, t)) this.afterAuthStateChangedOff = opts[k];
 };
 
-FbAuth.prototype.signIn = function(){
+FbAuth.prototype.signIn = function(e){
+  if(e) e.preventDefault();
   if(!this.beforeSignIn()) return;
   firebase.auth().signInWithEmailAndPassword(this.emailInput.value,  this.passwordInput.value).then(function(value){
     this.afterSignInSuccess(value);
@@ -53,7 +54,8 @@ FbAuth.prototype.signIn = function(){
   }, this);
 };
 
-FbAuth.prototype.signOut = function(){
+FbAuth.prototype.signOut = function(e){
+  if(e) e.preventDefault();
   if(!this.beforeSignOut()) return;
   this.auth.signOut().then(function(value){
     this.afterSignOutSuccess();

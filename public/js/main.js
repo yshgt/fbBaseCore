@@ -1,12 +1,11 @@
 // var console = { log: function() {} }; // comment out for production mode
 
 function Main() {
-  this.setDom();
-  this.checkSetup();
-  this.initMain();
+  this.setup(); // default setting, do not remove
+  this.init();
 }
 
-Main.prototype.initMain = function() {
+Main.prototype.init = function() {
   // code someting here
 
 };
@@ -16,11 +15,12 @@ Main.prototype.initMain = function() {
 // ------------------------------------------------------------------------
 // you don't usually need to modify the code below
 // ------------------------------------------------------------------------
-Main.prototype.setDom = function(){
+Main.prototype.setup = function(){
   this.loginMessage = document.getElementById('login-message');
   this.loginMessageText = document.getElementById('login-message-text');
   this.tabs = document.getElementsByClassName("tab");
   this.setTabAction(this.tabs);
+  this.checkFb();
 };
 
 Main.prototype.setTabAction = function(tabs){
@@ -121,7 +121,7 @@ Main.prototype.fbAuthOpts = function(scope){
   };
 };
 
-Main.prototype.checkSetup = function() {
+Main.prototype.checkFb = function() {
   if (!window.firebase || !(firebase.app instanceof Function) || !window.config) {
     window.alert('You have not configured and imported the Firebase SDK. ' +
       'Make sure you go through the codelab setup instructions.');
