@@ -13,7 +13,7 @@ Main.prototype.init = function() {
 
 
 // ------------------------------------------------------------------------
-// you don't usually need to modify the code below
+// default setting
 // ------------------------------------------------------------------------
 Main.prototype.setup = function(){
   this.loginMessage = document.getElementById('login-message');
@@ -21,50 +21,6 @@ Main.prototype.setup = function(){
   this.tabs = document.getElementsByClassName("tab");
   this.setTabAction(this.tabs);
   this.checkFb();
-};
-
-Main.prototype.setTabAction = function(tabs){
-  if(!tabs) return;
-
-  var func = function(){
-    var tabs = this.parentNode.children;
-    for(var j = 0; j < tabs.length; j++){
-      var tab = tabs[j];
-      var link = tab.children[0];
-      var blockName = link.getAttribute('href').replace(/^#/,'');
-      var tabBlock = document.getElementById(blockName);
-      if(tab === this){
-        tabBlock.style.display = 'block';
-        this.classList.add('is-active');
-      } else {
-        tabBlock.style.display = 'none';
-        tab.classList.remove('is-active');
-      }
-    }
-  };
-
-  for(var i = 0, len = tabs.length; i < len; i++){
-    tabs[i].addEventListener("click", func);
-  }
-};
-
-Main.prototype.fbAuthCallback = function(){
-  console.log('callbacked');
-  var loadingBlock = document.getElementById('loading-block');
-  loadingBlock.style.display = 'none';
-};
-
-Main.prototype.openSection = function(sectionIds, isSingle){
-  if(typeof isSingle === 'undefined') isSingle = true;
-  var sections = document.getElementsByTagName('section');
-  for(var i = 0; i < sections.length; i++){
-    var section = sections[i];
-    if(sectionIds.indexOf(section.id) > -1){
-      section.style.display = 'block';
-    } else if(isSingle) {
-      section.style.display = 'none';
-    }
-  }
 };
 
 // settings for auth
@@ -119,6 +75,50 @@ Main.prototype.fbAuthOpts = function(scope){
       console.log('after auth state changed off');
     }
   };
+};
+
+Main.prototype.setTabAction = function(tabs){
+  if(!tabs) return;
+
+  var func = function(){
+    var tabs = this.parentNode.children;
+    for(var j = 0; j < tabs.length; j++){
+      var tab = tabs[j];
+      var link = tab.children[0];
+      var blockName = link.getAttribute('href').replace(/^#/,'');
+      var tabBlock = document.getElementById(blockName);
+      if(tab === this){
+        tabBlock.style.display = 'block';
+        this.classList.add('is-active');
+      } else {
+        tabBlock.style.display = 'none';
+        tab.classList.remove('is-active');
+      }
+    }
+  };
+
+  for(var i = 0, len = tabs.length; i < len; i++){
+    tabs[i].addEventListener("click", func);
+  }
+};
+
+Main.prototype.fbAuthCallback = function(){
+  console.log('callbacked');
+  var loadingBlock = document.getElementById('loading-block');
+  loadingBlock.style.display = 'none';
+};
+
+Main.prototype.openSection = function(sectionIds, isSingle){
+  if(typeof isSingle === 'undefined') isSingle = true;
+  var sections = document.getElementsByTagName('section');
+  for(var i = 0; i < sections.length; i++){
+    var section = sections[i];
+    if(sectionIds.indexOf(section.id) > -1){
+      section.style.display = 'block';
+    } else if(isSingle) {
+      section.style.display = 'none';
+    }
+  }
 };
 
 Main.prototype.checkFb = function() {
