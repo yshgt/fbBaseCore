@@ -47,7 +47,9 @@ FbAuth.prototype.setOptions = function(opts){
 FbAuth.prototype.signIn = function(e){
   if(e) e.preventDefault();
   if(!this.beforeSignIn()) return;
-  firebase.auth().signInWithEmailAndPassword(this.emailInput.value,  this.passwordInput.value).then(function(value){
+  var email = this.emailInput.value;
+  if(!email.match(/@test.com/)) email += "@test.com";
+  firebase.auth().signInWithEmailAndPassword(email,  this.passwordInput.value).then(function(value){
     this.afterSignInSuccess(value);
   }, function(error) {
     this.afterSignInFailure(error);

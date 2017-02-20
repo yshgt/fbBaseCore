@@ -1,20 +1,248 @@
-// var console = { log: function() {} }; // comment out for production mode
-
 function Main() {
-  this.setup(); // default setting, do not remove
+  this.setup();
   this.init();
+  Main.setupFunctions.forEach(function(func, index){
+    func();
+  });
 }
+Main.setupFunctions = [];
 
 Main.prototype.init = function() {
   // code someting here
+  this.logoButton = document.getElementById('logo-button');
+  this.logoButton.addEventListener('click', function(){
+    this.changeState('postList', {renew: false}, true);
+  }.bind(this));
+
+
+  this.newPostButton = document.getElementById('newPost-button');
+  this.newPostButton.addEventListener('click', function(){
+    this.changeState('newPost', {}, true);
+  }.bind(this));
+  this.organizationSelect = document.getElementById('organization-select');
+
+  this.newPostSection = document.getElementById('newPost-section');
+  this.postButton = document.getElementById('post-button');
+  this.postButton.addEventListener('click', this.postNew.bind(this));
+  this.postsBlock = document.getElementById('posts-block');
+  this.detailHeaderSection = document.getElementById('detail-header-section');
+  this.detailBodySection = document.getElementById('detail-body-section');
+  this.articleBlock = document.getElementById('article-block');
+  this.groupsBlock = document.getElementById('groups-block');
+
+  this.postCommentButton = document.getElementById('postComment-button');
+  this.postCommentButton.addEventListener('click', this.postComment.bind(this));
+
+  this.newGroupSection = document.getElementById('newGroup-section');
+  this.groupPostButton = document.getElementById('group-post-button');
+  this.groupPostButton.addEventListener('click', this.postNewGroup.bind(this));
+
+  this.db = firebase.database();
+  this.postsDbRef = this.db.ref('/posts/');
+  this.groupsDbRef = this.db.ref('/groups/');
+  this.settingsDbRef = this.db.ref('/settings/');
+  this.commentsDbRef = this.db.ref('/comments/');
+  this.fs = firebase.storage();
+  this.postFsRef = this.fs.ref();
+
+  this.posts = [];
+  this.postId = null;
+  this.initTinyMCE();
+  this.watchState();
 
 };
 
+Main.prototype.watchState = function(){
+  window.addEventListener('popstate', function(event){
+    if(!event || !event.state) return;
+    var stateCd = event.state.stateCd;
+    this.changeState(stateCd, event.state, false);
+  }.bind(this));
+};
 
+Main.prototype.initState = function(){
+  if(!currentUser) return;
+  var pathname = location.pathname;
+  var ret, stateCd, StateData;
 
-// ------------------------------------------------------------------------
-// default setting
-// ------------------------------------------------------------------------
+  // /posts/POSTID/groups/LESSONID
+  ret = pathname.match(/^\/posts\/(.+)\/groups\/(.+)\/edit$/);
+  if(ret && ret.length == 3){
+    stateCd = 'groupEdit';
+    this.postId = ret[1];
+    this.groupId = ret[2];
+    stateData = {
+      stateCd: stateCd,
+      post: {id: this.postId},
+      group: {id: this.groupId}
+    };
+    this.changeState(stateCd, stateData, false);
+    return;
+  }
+
+  // /posts/POSTID/groups/LESSONID
+  ret = pathname.match(/^\/posts\/(.+)\/groups\/(.+)$/);
+  if(ret && ret.length == 3){
+    stateCd = 'groupDetail';
+    this.postId = ret[1];
+    this.groupId = ret[2];
+    stateData = {
+      stateCd: stateCd,
+      post: {id: this.postId},
+      group: {id: this.groupId}
+    };
+    this.changeState(stateCd, stateData, false);
+    return;
+  }
+
+  // /posts/POSTID/edit
+  ret = pathname.match(/^\/posts\/(.+)\/new$/);
+  if(ret && ret.length == 2){
+    stateCd = 'newGroup';
+    this.postId = ret[1];
+    stateData = {
+      stateCd: stateCd,
+      post: {id: this.postId}
+    };
+    this.changeState(stateCd, stateData, false);
+    return;
+  }
+
+  // /posts/POSTID/edit
+  ret = pathname.match(/^\/posts\/(.+)\/edit$/);
+  if(ret && ret.length == 2){
+    stateCd = 'editPost';
+    this.postId = ret[1];
+    stateData = {
+      stateCd: stateCd,
+      post: {id: this.postId}
+    };
+    this.changeState(stateCd, stateData, false);
+    return;
+  }
+
+  // /posts/POSTID
+  ret = pathname.match(/^\/posts\/(.+)$/);
+  if(ret && ret.length == 2){
+    stateCd = 'postDetail';
+    this.postId = ret[1];
+    stateData = {
+      stateCd: stateCd,
+      post: {id: this.postId}
+    };
+    this.changeState(stateCd, stateData, false);
+    return;
+  }
+
+  // /new
+  ret = pathname.match(/^\/new$/);
+  if(ret){
+    stateCd = 'newPost';
+    stateData = {
+      stateCd: stateCd
+    };
+    this.changeState(stateCd, stateData, false);
+    return;
+  }
+  // /
+  ret = pathname.match(/^\/$/);
+  if(ret){
+    stateCd = 'postList';
+    stateData = {
+      stateCd: stateCd,
+      renew: true
+    };
+    this.changeState(stateCd, stateData);
+    return;
+  }
+
+};
+
+Main.prototype.changeState = function(stateCd, data, isPushState){
+  if(typeof isPushState === 'undefined') isPushState = true;
+  if(typeof data === 'undefined') data = {};
+  var post;
+
+  if(stateCd === 'postList'){
+    this.showPostList(data.renew, function(posts){
+      if(!isPushState) return;
+      var stateData = {
+        stateCd: stateCd,
+        posts: posts
+      };
+      tool.pushState(stateData, stateCd, '/');
+    });
+  } else if(stateCd === 'postDetail'){
+    if(!data || !data.post) return;
+    post = data.post;
+    this.showPostDetail(post, function(post){
+      if(!isPushState) return;
+      var id = post.id;
+      var stateData = {
+        stateCd: stateCd,
+        post: post
+      };
+      tool.pushState(stateData, stateCd, '/posts/' + id);
+    });
+  } else if(stateCd === 'groupDetail'){
+    if(!data || !data.post || !data.group) return;
+    post = data.post;
+    group = data.group;
+    this.showGroupDetail(post, group, function(post, group){
+      var stateData = {
+        stateCd: stateCd,
+        post: post,
+        group: group
+      };
+      tool.pushState(stateData, stateCd, '/posts/' + post.id + '/groups/' + group.id);
+    });
+
+  } else if(stateCd === 'newPost'){
+    this.showNewPost(function(){
+      var stateData = {
+        stateCd: stateCd
+      };
+      tool.pushState(stateData, stateCd, '/new');
+    });
+  } else if(stateCd === 'editPost'){
+    if(!data || !data.post) return;
+    post = data.post;
+    this.showEditPost(post, function(post){
+      var id = post.id;
+      var stateData = {
+        stateCd: stateCd,
+        post: post
+      };
+      tool.pushState(stateData, stateCd, '/posts/' + id + '/edit');
+    });
+  } else if(stateCd === 'newGroup'){
+    if(!data || !data.post) return;
+    post = data.post;
+    this.showNewGroup(post, function(){
+      var id = post.id;
+      var stateData = {
+        stateCd: stateCd,
+        post: post
+      };
+      tool.pushState(stateData, stateCd, '/posts/' + id + '/new');
+    });
+  } else if(stateCd === 'editGroup'){
+    if(!data || !data.post) return;
+    post = data.post;
+    group = data.group;
+    this.showEditGroup(post, group, function(){
+      var postId = post.id;
+      var groupId = group.id;
+      var stateData = {
+        stateCd: stateCd,
+        post: post,
+        group: group
+      };
+      tool.pushState(stateData, stateCd, '/posts/' + post.id + '/groups/' + group.id + '/edit');
+    });
+  }
+};
+
 Main.prototype.setup = function(){
   this.loginMessage = document.getElementById('login-message');
   this.loginMessageText = document.getElementById('login-message-text');
@@ -23,103 +251,6 @@ Main.prototype.setup = function(){
   this.checkFb();
 };
 
-// settings for auth
-Main.prototype.fbAuthOpts = function(scope){
-  return {
-    // called just before sending signIn request (after button clicked)
-    beforeSignIn: function(){
-      console.log('overload beforeSignIn 2');
-      // validation
-      if(this.emailInput.value.length < 4){
-        alert('invalid email address');
-        return false;
-      }
-      if(this.passwordInput.value.length < 2){
-        alert('invalid password address');
-        return false;
-      }
-      // change the button state into loading
-      this.signInButton.classList.add('is-loading');
-      return true;
-    },
-    beforeSignOut: function(){
-      return true;
-    },
-    // called after signin successfully
-    afterSignInSuccess: function(value){
-      console.log('overload afterSignInSuccess 2', value);
-      // remove loading state from the button
-      this.signInButton.classList.remove('is-loading');
-    },
-    // called after signin fail
-    afterSignInFailure: function(error){
-      console.log('after signIn Failure 2', error);
-      // remove loading state from the button
-      this.signInButton.classList.remove('is-loading');
-      // show error message
-      scope.loginMessageText.innerHTML = error.message;
-      scope.loginMessage.style.display = 'block';
-    },
-    // called after auth state changed into login
-    afterAuthStateChangedOn: function(user){
-      // hide login section and show main section
-      scope.openSection(['main-section'], true);
-      console.log('after auth state changed on', user);
-      window.currentUser = user;
-    },
-    // called after auth state changed into logout
-    afterAuthStateChangedOff: function(){
-      // show login section and hide main section
-      window.currentUser = null;
-      scope.openSection(['login-section'], true);
-      console.log('after auth state changed off');
-    }
-  };
-};
-
-Main.prototype.setTabAction = function(tabs){
-  if(!tabs) return;
-
-  var func = function(){
-    var tabs = this.parentNode.children;
-    for(var j = 0; j < tabs.length; j++){
-      var tab = tabs[j];
-      var link = tab.children[0];
-      var blockName = link.getAttribute('href').replace(/^#/,'');
-      var tabBlock = document.getElementById(blockName);
-      if(tab === this){
-        tabBlock.style.display = 'block';
-        this.classList.add('is-active');
-      } else {
-        tabBlock.style.display = 'none';
-        tab.classList.remove('is-active');
-      }
-    }
-  };
-
-  for(var i = 0, len = tabs.length; i < len; i++){
-    tabs[i].addEventListener("click", func);
-  }
-};
-
-Main.prototype.fbAuthCallback = function(){
-  console.log('callbacked');
-  var loadingBlock = document.getElementById('loading-block');
-  loadingBlock.style.display = 'none';
-};
-
-Main.prototype.openSection = function(sectionIds, isSingle){
-  if(typeof isSingle === 'undefined') isSingle = true;
-  var sections = document.getElementsByTagName('section');
-  for(var i = 0; i < sections.length; i++){
-    var section = sections[i];
-    if(sectionIds.indexOf(section.id) > -1){
-      section.style.display = 'block';
-    } else if(isSingle) {
-      section.style.display = 'none';
-    }
-  }
-};
 
 Main.prototype.checkFb = function() {
   if (!window.firebase || !(firebase.app instanceof Function) || !window.config) {
@@ -133,9 +264,4 @@ Main.prototype.checkFb = function() {
       'You may also need to visit the Storage tab and paste the name of your bucket which is ' +
       'displayed there.');
   }
-};
-
-window.onload = function() {
-  window.main = new Main();
-  window.fbAuth = new FbAuth(main.fbAuthCallback, main.fbAuthOpts(main));
 };
