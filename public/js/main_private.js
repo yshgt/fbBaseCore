@@ -161,6 +161,7 @@ Main.prototype.openSection = function(sectionIds, isSingle){
       section.style.display = 'none';
     }
   }
+  window.scrollTo(0,0);
 };
 
 Main.prototype.initTinyMCE = function(){
